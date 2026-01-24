@@ -1,0 +1,15 @@
+{
+    "name": "careerflow-platform",
+    "private": true,
+    "workspaces": [
+      "apps/*"
+    ],
+    "scripts": {
+      "dev:api": "npm run start:dev -w @careerflow/api",
+      "dev:web": "npm run dev -w @careerflow/web",
+      "build": "npm run build -ws",
+      "lint": "npm run lint -ws",
+      "test": "npm run test -ws"
+    }
+  }
+  
