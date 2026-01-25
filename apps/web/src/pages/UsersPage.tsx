@@ -8,10 +8,18 @@ export default function UsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   async function load() {
-    const data = await listUsers();
-    setUsers(data);
+    setError(null);
+    try {
+      const data = await listUsers();
+      setUsers(data);
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to load users');
+    } finally {
+      setInitialLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -67,13 +75,26 @@ export default function UsersPage() {
       {success && <p style={{ color: 'green' }}>✅ {success}</p>}
 
       <h2>Users</h2>
-      <ul>
-        {users.map((u) => (
-          <li key={u.id}>
-            {u.email} {u.name && `(${u.name})`}
-          </li>
-        ))}
-      </ul>
+      <button
+        onClick={() => load()}
+        disabled={initialLoading}
+        style={{ padding: '6px 10px', cursor: 'pointer', marginBottom: 10 }}
+      >
+        Refresh
+      </button>
+      {initialLoading ? (
+        <p>Loading users…</p>
+      ) : users.length === 0 ? (
+        <p style={{ color: '#555' }}>No users yet. Create the first one.</p>
+      ) : (
+        <ul>
+            {users.map((u) => (
+            <li key={u.id}>
+                {u.email} {u.name && `(${u.name})`}
+            </li>
+            ))}
+        </ul>
+      )}
     </div>
   );
 }
