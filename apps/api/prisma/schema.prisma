@@ -21,3 +21,21 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+model JobApplication {
+  id        String            @id @default(cuid())
+  company   String
+  role      String
+  status    ApplicationStatus @default(APPLIED)
+  notes     String?
+  appliedAt DateTime?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}

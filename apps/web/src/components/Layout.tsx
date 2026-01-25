@@ -23,6 +23,9 @@ export default function Layout() {
             <NavLink to="/users" style={linkStyle}>
               Users
             </NavLink>
+            <NavLink to="/applications" style={linkStyle}>
+              Applications
+            </NavLink>
           </nav>
         </div>
       </header>
