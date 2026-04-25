@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
-  CreateApplicationDto,
   ApplicationStatusDto,
+  CreateApplicationDto,
 } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 
@@ -33,12 +33,52 @@ export class ApplicationsService {
     });
   }
 
+  async stats(userId: string) {
+    const applications = await this.prisma.jobApplication.findMany({
+      where: { userId },
+      select: { status: true },
+    });
+
+    const result = {
+      total: applications.length,
+      applied: 0,
+      interview: 0,
+      offer: 0,
+      rejected: 0,
+      withdrawn: 0,
+    };
+
+    for (const app of applications) {
+      switch (app.status) {
+        case 'APPLIED':
+          result.applied++;
+          break;
+        case 'INTERVIEW':
+          result.interview++;
+          break;
+        case 'OFFER':
+          result.offer++;
+          break;
+        case 'REJECTED':
+          result.rejected++;
+          break;
+        case 'WITHDRAWN':
+          result.withdrawn++;
+          break;
+      }
+    }
+
+    return result;
+  }
+
   async update(userId: string, id: string, dto: UpdateApplicationDto) {
-    // Ownership check: only update if record belongs to the current user
     const existing = await this.prisma.jobApplication.findFirst({
       where: { id, userId },
     });
-    if (!existing) throw new NotFoundException('Application not found');
+
+    if (!existing) {
+      throw new NotFoundException('Application not found');
+    }
 
     return this.prisma.jobApplication.update({
       where: { id },
@@ -59,13 +99,18 @@ export class ApplicationsService {
   }
 
   async remove(userId: string, id: string) {
-    // Ownership check: only delete if record belongs to the current user
     const existing = await this.prisma.jobApplication.findFirst({
       where: { id, userId },
     });
-    if (!existing) throw new NotFoundException('Application not found');
 
-    await this.prisma.jobApplication.delete({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException('Application not found');
+    }
+
+    await this.prisma.jobApplication.delete({
+      where: { id },
+    });
+
     return { deleted: true };
   }
 }

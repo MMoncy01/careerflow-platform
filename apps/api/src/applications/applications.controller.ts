@@ -7,10 +7,15 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
   Req,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApplicationsService } from './applications.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
@@ -25,14 +30,14 @@ export class ApplicationsController {
   constructor(private readonly service: ApplicationsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a job application (owned by the current user)' })
+  @ApiOperation({ summary: 'Create a job application' })
   create(@Req() req: any, @Body() dto: CreateApplicationDto) {
     const userId = userIdFromReq(req);
     return this.service.create(userId, dto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'List current user job applications (optional filter by status)' })
+  @ApiOperation({ summary: 'List current user job applications' })
   @ApiQuery({
     name: 'status',
     required: false,
@@ -43,15 +48,26 @@ export class ApplicationsController {
     return this.service.findAll(userId, status);
   }
 
+  @Get('stats')
+  @ApiOperation({ summary: 'Get current user application statistics' })
+  stats(@Req() req: any) {
+    const userId = userIdFromReq(req);
+    return this.service.stats(userId);
+  }
+
   @Patch(':id')
-  @ApiOperation({ summary: 'Update a job application (only if owned by current user)' })
-  update(@Req() req: any, @Param('id') id: string, @Body() dto: UpdateApplicationDto) {
+  @ApiOperation({ summary: 'Update a job application' })
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateApplicationDto,
+  ) {
     const userId = userIdFromReq(req);
     return this.service.update(userId, id, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a job application (only if owned by current user)' })
+  @ApiOperation({ summary: 'Delete a job application' })
   remove(@Req() req: any, @Param('id') id: string) {
     const userId = userIdFromReq(req);
     return this.service.remove(userId, id);
