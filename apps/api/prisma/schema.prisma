@@ -34,16 +34,31 @@ enum ApplicationStatus {
 }
 
 model JobApplication {
-  id        String            @id @default(cuid())
-  company   String
-  role      String
-  status    ApplicationStatus @default(APPLIED)
-  notes     String?
-  appliedAt DateTime?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String            @id @default(cuid())
+  company        String
+  role           String
+  status         ApplicationStatus @default(APPLIED)
+
+  location       String?
+  jobUrl         String?
+  source         String?
+  contactName    String?
+  contactEmail   String?
+  resumeVersion  String?
+  jobDescription String?
+
+  notes          String?
+  appliedAt      DateTime?
+  followUpDate   DateTime?
+  lastActivityAt DateTime          @default(now())
+
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([status])
+  @@index([followUpDate])
 }

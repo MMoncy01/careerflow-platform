@@ -32,27 +32,25 @@ export class ApplicationsController {
   @Post()
   @ApiOperation({ summary: 'Create a job application' })
   create(@Req() req: any, @Body() dto: CreateApplicationDto) {
-    const userId = userIdFromReq(req);
-    return this.service.create(userId, dto);
+    return this.service.create(userIdFromReq(req), dto);
   }
 
   @Get()
   @ApiOperation({ summary: 'List current user job applications' })
-  @ApiQuery({
-    name: 'status',
-    required: false,
-    description: 'APPLIED | INTERVIEW | OFFER | REJECTED | WITHDRAWN',
-  })
-  findAll(@Req() req: any, @Query('status') status?: string) {
-    const userId = userIdFromReq(req);
-    return this.service.findAll(userId, status);
+  @ApiQuery({ name: 'status', required: false })
+  @ApiQuery({ name: 'search', required: false })
+  findAll(
+    @Req() req: any,
+    @Query('status') status?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.service.findAll(userIdFromReq(req), status, search);
   }
 
   @Get('stats')
-  @ApiOperation({ summary: 'Get current user application statistics' })
+  @ApiOperation({ summary: 'Get current user application analytics' })
   stats(@Req() req: any) {
-    const userId = userIdFromReq(req);
-    return this.service.stats(userId);
+    return this.service.stats(userIdFromReq(req));
   }
 
   @Patch(':id')
@@ -62,14 +60,12 @@ export class ApplicationsController {
     @Param('id') id: string,
     @Body() dto: UpdateApplicationDto,
   ) {
-    const userId = userIdFromReq(req);
-    return this.service.update(userId, id, dto);
+    return this.service.update(userIdFromReq(req), id, dto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a job application' })
   remove(@Req() req: any, @Param('id') id: string) {
-    const userId = userIdFromReq(req);
-    return this.service.remove(userId, id);
+    return this.service.remove(userIdFromReq(req), id);
   }
 }
