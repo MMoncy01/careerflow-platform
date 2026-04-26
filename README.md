@@ -1,5 +1,3 @@
-</> Markdown
-
 # CareerFlow – Intelligent Job Application Tracking Platform
 
 CareerFlow is a production-style full-stack web application built to help job seekers manage, monitor, and optimize their complete job search workflow in one centralized platform.
@@ -134,91 +132,154 @@ NestJS REST API
 Prisma ORM Service Layer
         ↓
 PostgreSQL Database
+```
 
 Authentication Flow:
 
+```text
 Register/Login → JWT Access Token + Refresh Cookie
         ↓
 Protected API Requests
         ↓
 Per-user private data access
-Main Screens Included
-Home Page
-Register Page
-Login Page
-Analytics Dashboard
-Applications Management Workspace
-Protected 404 Routing
-Swagger API Docs
-Sample Product Screenshots
+```
 
-Local Development Setup
-</> Bash
-1. Clone repository
+---
+
+## Main Screens Included
+
+- Home Page
+- Register Page
+- Login Page
+- Analytics Dashboard
+- Applications Management Workspace
+- Protected 404 Routing
+- Swagger API Docs
+
+---
+
+## Sample Product Screenshots
+
+> Add screenshots here after UI finalization.
+
+Recommended screenshots to upload later:
+
+```md
+![Dashboard](screenshots/dashboard.png)
+![Applications](screenshots/applications.png)
+![Login](screenshots/login.png)
+```
+
+---
+
+## Local Development Setup
+
+### 1. Clone repository
+
+```bash
 git clone https://github.com/MMoncy01/careerflow-platform.git
 cd careerflow-platform
-2. Install dependencies
-</> Bash
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
-3. Start PostgreSQL (Docker)
-</> Bash
+```
+
+### 3. Start PostgreSQL (Docker)
+
+```bash
 docker compose up -d
-4. Run Prisma migrations
-</> Bash
+```
+
+### 4. Run Prisma migrations
+
+```bash
 cd apps/api
 npx prisma migrate dev
 npx prisma generate
-5. Start Backend API
-</> Bash
+```
+
+### 5. Start Backend API
+
+```bash
 npm run start:dev
+```
 
 Backend runs on:
+
+```txt
 http://localhost:3000
+```
 
 Swagger Docs:
-http://localhost:3000/docs
 
-6. Start Frontend
+```txt
+http://localhost:3000/docs
+```
+
+### 6. Start Frontend
 
 Open new terminal:
-</> Bash
+
+```bash
 cd apps/web
 npm run dev
+```
 
 Frontend runs on:
-http://localhost:5173
 
-Core REST Endpoints
-Auth
-POST /auth/register
-POST /auth/login
-POST /auth/refresh
-POST /auth/logout
-GET /auth/me
-Applications
-POST /applications
-GET /applications
-GET /applications/stats
-PATCH /applications/:id
-DELETE /applications/:id
-Engineering Highlights
+```txt
+http://localhost:5173
+```
+
+---
+
+## Core REST Endpoints
+
+### Auth
+
+- POST `/auth/register`
+- POST `/auth/login`
+- POST `/auth/refresh`
+- POST `/auth/logout`
+- GET `/auth/me`
+
+### Applications
+
+- POST `/applications`
+- GET `/applications`
+- GET `/applications/stats`
+- PATCH `/applications/:id`
+- DELETE `/applications/:id`
+
+---
+
+## Engineering Highlights
 
 This project demonstrates:
 
-scalable frontend/backend separation
-protected enterprise authentication workflow
-relational data ownership modeling
-advanced DTO validation
-analytics aggregation logic
-production-style REST architecture
-real-world CRUD + search + workflow management
-Planned Next Enhancements
-AI job description summarizer
-recruiter follow-up email generator
-interview tracker module
-document/resume manager
-cloud deployment
-Repository Status
+- scalable frontend/backend separation
+- protected enterprise authentication workflow
+- relational data ownership modeling
+- advanced DTO validation
+- analytics aggregation logic
+- production-style REST architecture
+- real-world CRUD + search + workflow management
+
+---
+
+## Planned Next Enhancements
+
+- AI job description summarizer
+- recruiter follow-up email generator
+- interview tracker module
+- document/resume manager
+- cloud deployment
+
+---
+
+## Repository Status
 
 Actively being enhanced as a production-grade portfolio project.
-```
