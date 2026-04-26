@@ -12,31 +12,28 @@ const STATUSES: ApplicationStatus[] = ['APPLIED', 'INTERVIEW', 'OFFER', 'REJECTE
 
 export default function ApplicationsPage() {
   const [items, setItems] = useState<JobApplication[]>([]);
-  const [filter, setFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
+  const [filter, setFilter] = useState<string>('');
+  const [search, setSearch] = useState('');
 
-  const [company, setCompany] = useState('');
-  const [role, setRole] = useState('');
-  const [status, setStatus] = useState<ApplicationStatus>('APPLIED');
-  const [appliedAt, setAppliedAt] = useState('');
-  const [notes, setNotes] = useState('');
-
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [form, setForm] = useState<any>({
+    company: '',
+    role: '',
+    status: 'APPLIED',
+    location: '',
+    jobUrl: '',
+    source: '',
+    contactName: '',
+    contactEmail: '',
+    resumeVersion: '',
+    jobDescription: '',
+    notes: '',
+    appliedAt: '',
+    followUpDate: '',
+  });
 
   async function load() {
-    setError(null);
-    setLoading(true);
-
-    try {
-      const data = await listApplications(filter === 'ALL' ? undefined : filter);
-      setItems(data);
-    } catch (err: any) {
-      setError(err?.message ?? 'Failed to load applications');
-    } finally {
-      setLoading(false);
-    }
+    const data = await listApplications(filter || undefined, search || undefined);
+    setItems(data);
   }
 
   useEffect(() => {
@@ -45,203 +42,109 @@ export default function ApplicationsPage() {
 
   async function onCreate(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      await createApplication({
-        company: company.trim(),
-        role: role.trim(),
-        status,
-        appliedAt: appliedAt || undefined,
-        notes: notes.trim() || undefined,
-      });
-
-      setCompany('');
-      setRole('');
-      setStatus('APPLIED');
-      setAppliedAt('');
-      setNotes('');
-      setSuccess('Application added successfully.');
-      await load();
-    } catch (err: any) {
-      setError(err?.message ?? 'Create failed');
-    } finally {
-      setSaving(false);
-    }
+    await createApplication(form);
+    setForm({
+      company: '',
+      role: '',
+      status: 'APPLIED',
+      location: '',
+      jobUrl: '',
+      source: '',
+      contactName: '',
+      contactEmail: '',
+      resumeVersion: '',
+      jobDescription: '',
+      notes: '',
+      appliedAt: '',
+      followUpDate: '',
+    });
+    await load();
   }
 
-  async function onStatusChange(id: string, nextStatus: ApplicationStatus) {
-    try {
-      await updateApplication(id, { status: nextStatus });
-      await load();
-    } catch (err: any) {
-      setError(err?.message ?? 'Update failed');
-    }
+  async function quickStatus(id: string, status: ApplicationStatus) {
+    await updateApplication(id, { status });
+    await load();
   }
 
-  async function onDelete(id: string) {
+  async function remove(id: string) {
     if (!confirm('Delete this application?')) return;
-
-    try {
-      await deleteApplication(id);
-      await load();
-    } catch (err: any) {
-      setError(err?.message ?? 'Delete failed');
-    }
+    await deleteApplication(id);
+    await load();
   }
 
   return (
     <main className="page">
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-        <div>
-          <div className="badge">Applications</div>
-          <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>Job Applications</h1>
-          <p className="muted">Add, filter, update, and manage your job search pipeline.</p>
-        </div>
-      </div>
+      <div className="badge">Career Applications Workspace</div>
+      <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>Applications Manager</h1>
+      <p className="muted">Track every application, recruiter contact, follow-up and outcome.</p>
 
       <section className="card" style={{ padding: 22, marginTop: 20 }}>
-        <h2 style={{ marginTop: 0 }}>Add application</h2>
+        <h2 style={{ marginTop: 0 }}>Add new application</h2>
 
         <form onSubmit={onCreate} className="grid">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <input
-              className="input"
-              placeholder="Company"
-              value={company}
-              required
-              onChange={(e) => setCompany(e.target.value)}
-            />
-
-            <input
-              className="input"
-              placeholder="Role"
-              value={role}
-              required
-              onChange={(e) => setRole(e.target.value)}
-            />
-
-            <select className="select" value={status} onChange={(e) => setStatus(e.target.value as ApplicationStatus)}>
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
+            <input className="input" placeholder="Company" value={form.company} onChange={(e)=>setForm({...form,company:e.target.value})} required />
+            <input className="input" placeholder="Role" value={form.role} onChange={(e)=>setForm({...form,role:e.target.value})} required />
+            <select className="select" value={form.status} onChange={(e)=>setForm({...form,status:e.target.value})}>
+              {STATUSES.map(s=><option key={s}>{s}</option>)}
             </select>
-
-            <input className="input" type="date" value={appliedAt} onChange={(e) => setAppliedAt(e.target.value)} />
+            <input className="input" placeholder="Location" value={form.location} onChange={(e)=>setForm({...form,location:e.target.value})} />
+            <input className="input" placeholder="Job URL" value={form.jobUrl} onChange={(e)=>setForm({...form,jobUrl:e.target.value})} />
+            <input className="input" placeholder="Source (LinkedIn, Referral...)" value={form.source} onChange={(e)=>setForm({...form,source:e.target.value})} />
+            <input className="input" placeholder="Recruiter Contact Name" value={form.contactName} onChange={(e)=>setForm({...form,contactName:e.target.value})} />
+            <input className="input" placeholder="Recruiter Email" value={form.contactEmail} onChange={(e)=>setForm({...form,contactEmail:e.target.value})} />
+            <input className="input" placeholder="Resume Version Used" value={form.resumeVersion} onChange={(e)=>setForm({...form,resumeVersion:e.target.value})} />
+            <input className="input" type="date" value={form.appliedAt} onChange={(e)=>setForm({...form,appliedAt:e.target.value})} />
+            <input className="input" type="date" value={form.followUpDate} onChange={(e)=>setForm({...form,followUpDate:e.target.value})} />
           </div>
 
-          <textarea
-            className="textarea"
-            placeholder="Notes: referral, interview feedback, follow-up reminder..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
+          <textarea className="textarea" placeholder="Job Description" value={form.jobDescription} onChange={(e)=>setForm({...form,jobDescription:e.target.value})}/>
+          <textarea className="textarea" placeholder="Private Notes" value={form.notes} onChange={(e)=>setForm({...form,notes:e.target.value})}/>
 
-          <button className="btn btn-primary" disabled={saving}>
-            {saving ? 'Saving...' : 'Add Application'}
-          </button>
+          <button className="btn btn-primary">Add Application</button>
         </form>
       </section>
 
-      <section style={{ marginTop: 22 }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'space-between' }}>
-          <h2 style={{ margin: 0 }}>Your applications</h2>
+      <section style={{ marginTop: 24 }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <input className="input" style={{ maxWidth: 260 }} placeholder="Search company / role / recruiter..." value={search} onChange={(e)=>setSearch(e.target.value)} />
+          <button className="btn btn-secondary" onClick={load}>Search</button>
 
-          <div style={{ display: 'flex', gap: 10 }}>
-            <select className="select" value={filter} onChange={(e) => setFilter(e.target.value as any)}>
-              <option value="ALL">ALL</option>
-              {STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-
-            <button className="btn btn-secondary" onClick={load}>
-              Refresh
-            </button>
-          </div>
+          <select className="select" style={{ maxWidth: 220 }} value={filter} onChange={(e)=>setFilter(e.target.value)}>
+            <option value="">ALL STATUS</option>
+            {STATUSES.map(s=><option key={s}>{s}</option>)}
+          </select>
         </div>
 
-        {error && <p className="error">❌ {error}</p>}
-        {success && <p className="success">✅ {success}</p>}
+        <div className="grid" style={{ marginTop: 18 }}>
+          {items.map((a) => (
+            <div key={a.id} className="card" style={{ padding: 18 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
+                <div style={{ maxWidth: 700 }}>
+                  <div className="badge">{a.status}</div>
+                  <h3 style={{ margin: '10px 0 4px', fontSize: 22 }}>{a.company}</h3>
+                  <div className="muted">{a.role}</div>
+                  <div className="muted">{a.location}</div>
+                  <div className="muted">{a.contactName} {a.contactEmail ? `• ${a.contactEmail}` : ''}</div>
+                  <div className="muted">{a.resumeVersion}</div>
+                  {a.followUpDate && <div className="muted">Follow up: {a.followUpDate.slice(0,10)}</div>}
+                  {a.notes && <p>{a.notes}</p>}
+                </div>
 
-        {loading ? (
-          <p className="muted">Loading applications...</p>
-        ) : items.length === 0 ? (
-          <div className="card" style={{ padding: 24, marginTop: 14 }}>
-            <p className="muted" style={{ margin: 0 }}>
-              No applications found. Add your first application above.
-            </p>
-          </div>
-        ) : (
-          <div className="grid" style={{ marginTop: 14 }}>
-            {items.map((a) => (
-              <ApplicationCard
-                key={a.id}
-                app={a}
-                onStatusChange={onStatusChange}
-                onDelete={onDelete}
-              />
-            ))}
-          </div>
-        )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <select className="select" value={a.status} onChange={(e)=>quickStatus(a.id,e.target.value as ApplicationStatus)}>
+                    {STATUSES.map(s=><option key={s}>{s}</option>)}
+                  </select>
+
+                  <button className="btn btn-danger" onClick={()=>remove(a.id)}>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
     </main>
-  );
-}
-
-function ApplicationCard({
-  app,
-  onStatusChange,
-  onDelete,
-}: {
-  app: JobApplication;
-  onStatusChange: (id: string, status: ApplicationStatus) => void;
-  onDelete: (id: string) => void;
-}) {
-  return (
-    <div className="card" style={{ padding: 18 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
-        <div>
-          <div className="badge">{app.status}</div>
-          <h3 style={{ margin: '10px 0 4px', fontSize: 22 }}>{app.company}</h3>
-          <div className="muted">{app.role}</div>
-          {app.appliedAt && (
-            <div className="muted" style={{ marginTop: 6 }}>
-              Applied: {app.appliedAt.slice(0, 10)}
-            </div>
-          )}
-        </div>
-
-        <div style={{ display: 'flex', gap: 10, alignItems: 'start' }}>
-          <select
-            className="select"
-            value={app.status}
-            onChange={(e) => onStatusChange(app.id, e.target.value as ApplicationStatus)}
-          >
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-
-          <button className="btn btn-danger" onClick={() => onDelete(app.id)}>
-            Delete
-          </button>
-        </div>
-      </div>
-
-      {app.notes && (
-        <p style={{ marginTop: 12, lineHeight: 1.6 }}>
-          {app.notes}
-        </p>
-      )}
-    </div>
   );
 }

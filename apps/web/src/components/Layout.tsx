@@ -26,7 +26,7 @@ export default function Layout() {
           position: 'sticky',
           top: 0,
           zIndex: 20,
-          background: 'rgba(255, 255, 255, 0.86)',
+          background: 'rgba(255,255,255,0.88)',
           backdropFilter: 'blur(14px)',
           borderBottom: '1px solid #e6e9f0',
         }}
@@ -54,7 +54,7 @@ export default function Layout() {
             CareerFlow
           </NavLink>
 
-          <nav style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+          <nav style={{ display: 'flex', gap: 6 }}>
             <NavLink to="/" style={navLink} end>
               Home
             </NavLink>
@@ -69,18 +69,12 @@ export default function Layout() {
                 </NavLink>
               </>
             )}
-
-            <NavLink to="/users" style={navLink}>
-              Users
-            </NavLink>
           </nav>
 
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
             {!loading && user ? (
               <>
-                <span className="muted" style={{ fontSize: 14 }}>
-                  {user.email}
-                </span>
+                <span className="muted">{user.email}</span>
                 <button className="btn btn-secondary" onClick={onLogout}>
                   Logout
                 </button>

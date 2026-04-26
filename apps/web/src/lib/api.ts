@@ -4,8 +4,6 @@ export type User = {
   id: string;
   email: string;
   name?: string | null;
-  createdAt?: string;
-  updatedAt?: string;
 };
 
 export type ApplicationStatus =
@@ -20,19 +18,37 @@ export type JobApplication = {
   company: string;
   role: string;
   status: ApplicationStatus;
+
+  location?: string | null;
+  jobUrl?: string | null;
+  source?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  resumeVersion?: string | null;
+  jobDescription?: string | null;
+
   notes?: string | null;
   appliedAt?: string | null;
+  followUpDate?: string | null;
+  lastActivityAt?: string;
   createdAt: string;
   updatedAt: string;
 };
 
-export type ApplicationStats = {
+export type DashboardStats = {
   total: number;
   applied: number;
   interview: number;
   offer: number;
   rejected: number;
   withdrawn: number;
+  weeklyApplications: number;
+  responseRate: number;
+  interviewRate: number;
+  offerRate: number;
+  needsFollowUp: JobApplication[];
+  staleApplications: JobApplication[];
+  recentApplications: JobApplication[];
 };
 
 export type AuthResponse = {
@@ -48,7 +64,6 @@ export function setAccessToken(token: string | null) {
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const headers = new Headers(options.headers);
-
   headers.set('Content-Type', 'application/json');
 
   if (accessToken) {
@@ -73,87 +88,62 @@ export async function register(data: {
   email: string;
   name?: string;
   password: string;
-}): Promise<User> {
+}) {
   return request<User>('/auth/register', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function login(data: {
-  email: string;
-  password: string;
-}): Promise<AuthResponse> {
+export async function login(data: { email: string; password: string }) {
   return request<AuthResponse>('/auth/login', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function refresh(): Promise<AuthResponse> {
-  return request<AuthResponse>('/auth/refresh', {
-    method: 'POST',
-  });
+export async function refresh() {
+  return request<AuthResponse>('/auth/refresh', { method: 'POST' });
 }
 
-export async function logout(): Promise<{ ok: boolean }> {
-  return request<{ ok: boolean }>('/auth/logout', {
-    method: 'POST',
-  });
+export async function logout() {
+  return request<{ ok: boolean }>('/auth/logout', { method: 'POST' });
 }
 
-export async function me(): Promise<User> {
+export async function me() {
   return request<User>('/auth/me');
 }
 
-export async function listUsers(): Promise<User[]> {
-  return request<User[]>('/users');
-}
+export async function listApplications(status?: string, search?: string) {
+  const params = new URLSearchParams();
 
-export async function listApplications(
-  status?: ApplicationStatus,
-): Promise<JobApplication[]> {
-  const query = status ? `?status=${status}` : '';
+  if (status) params.set('status', status);
+  if (search) params.set('search', search);
+
+  const query = params.toString() ? `?${params.toString()}` : '';
   return request<JobApplication[]>(`/applications${query}`);
 }
 
-export async function createApplication(data: {
-  company: string;
-  role: string;
-  status?: ApplicationStatus;
-  notes?: string;
-  appliedAt?: string;
-}): Promise<JobApplication> {
+export async function createApplication(data: Partial<JobApplication>) {
   return request<JobApplication>('/applications', {
     method: 'POST',
     body: JSON.stringify(data),
   });
 }
 
-export async function updateApplication(
-  id: string,
-  data: Partial<{
-    company: string;
-    role: string;
-    status: ApplicationStatus;
-    notes: string;
-    appliedAt: string;
-  }>,
-): Promise<JobApplication> {
+export async function updateApplication(id: string, data: Partial<JobApplication>) {
   return request<JobApplication>(`/applications/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(data),
   });
 }
 
-export async function deleteApplication(
-  id: string,
-): Promise<{ deleted: boolean }> {
+export async function deleteApplication(id: string) {
   return request<{ deleted: boolean }>(`/applications/${id}`, {
     method: 'DELETE',
   });
 }
 
-export async function getApplicationStats(): Promise<ApplicationStats> {
-  return request<ApplicationStats>('/applications/stats');
+export async function getApplicationStats() {
+  return request<DashboardStats>('/applications/stats');
 }
