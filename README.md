@@ -1,4 +1,4 @@
-</>Markdown
+</> Markdown
 
 # CareerFlow – Intelligent Job Application Tracking Platform
 
@@ -153,23 +153,23 @@ Swagger API Docs
 Sample Product Screenshots
 
 Local Development Setup
-</>Bash
+</> Bash
 1. Clone repository
 git clone https://github.com/MMoncy01/careerflow-platform.git
 cd careerflow-platform
 2. Install dependencies
-</>Bash
+</> Bash
 npm install
 3. Start PostgreSQL (Docker)
-</>Bash
+</> Bash
 docker compose up -d
 4. Run Prisma migrations
-</>Bash
+</> Bash
 cd apps/api
 npx prisma migrate dev
 npx prisma generate
 5. Start Backend API
-</>Bash
+</> Bash
 npm run start:dev
 
 Backend runs on:
@@ -181,7 +181,7 @@ http://localhost:3000/docs
 6. Start Frontend
 
 Open new terminal:
-</>Bash
+</> Bash
 cd apps/web
 npm run dev
 
