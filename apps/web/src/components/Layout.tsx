@@ -5,13 +5,13 @@ export default function Layout() {
   const { user, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  const linkStyle = ({ isActive }: { isActive: boolean }) => ({
-    padding: '8px 12px',
-    borderRadius: 8,
+  const navLink = ({ isActive }: { isActive: boolean }) => ({
+    padding: '10px 14px',
+    borderRadius: 12,
     textDecoration: 'none',
-    color: isActive ? 'white' : '#222',
-    background: isActive ? '#111' : 'transparent',
-    border: '1px solid #ddd',
+    fontWeight: 800,
+    color: isActive ? '#ffffff' : '#344054',
+    background: isActive ? '#111827' : 'transparent',
   });
 
   async function onLogout() {
@@ -20,54 +20,77 @@ export default function Layout() {
   }
 
   return (
-    <div style={{ fontFamily: 'system-ui' }}>
-      <header style={{ borderBottom: '1px solid #eee', padding: 12 }}>
+    <div>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 20,
+          background: 'rgba(255, 255, 255, 0.86)',
+          backdropFilter: 'blur(14px)',
+          borderBottom: '1px solid #e6e9f0',
+        }}
+      >
         <div
           style={{
-            maxWidth: 1000,
+            maxWidth: 1120,
             margin: '0 auto',
+            padding: '14px 20px',
             display: 'flex',
-            gap: 10,
             alignItems: 'center',
+            gap: 18,
+            flexWrap: 'wrap',
           }}
         >
-          <div style={{ fontWeight: 700 }}>CareerFlow</div>
+          <NavLink
+            to="/"
+            style={{
+              fontWeight: 950,
+              fontSize: 21,
+              textDecoration: 'none',
+              color: '#111827',
+            }}
+          >
+            CareerFlow
+          </NavLink>
 
-          <nav style={{ display: 'flex', gap: 8, marginLeft: 12 }}>
-            <NavLink to="/" style={linkStyle} end>
+          <nav style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+            <NavLink to="/" style={navLink} end>
               Home
             </NavLink>
 
             {user && (
               <>
-                <NavLink to="/dashboard" style={linkStyle}>
+                <NavLink to="/dashboard" style={navLink}>
                   Dashboard
                 </NavLink>
-                <NavLink to="/applications" style={linkStyle}>
+                <NavLink to="/applications" style={navLink}>
                   Applications
                 </NavLink>
               </>
             )}
 
-            <NavLink to="/users" style={linkStyle}>
+            <NavLink to="/users" style={navLink}>
               Users
             </NavLink>
           </nav>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 10, alignItems: 'center' }}>
             {!loading && user ? (
               <>
-                <span style={{ color: '#555' }}>{user.email}</span>
-                <button onClick={onLogout} style={{ padding: '8px 12px', cursor: 'pointer' }}>
+                <span className="muted" style={{ fontSize: 14 }}>
+                  {user.email}
+                </span>
+                <button className="btn btn-secondary" onClick={onLogout}>
                   Logout
                 </button>
               </>
             ) : !loading ? (
               <>
-                <NavLink to="/login" style={linkStyle}>
+                <NavLink className="btn btn-secondary" to="/login">
                   Login
                 </NavLink>
-                <NavLink to="/register" style={linkStyle}>
+                <NavLink className="btn btn-primary" to="/register">
                   Register
                 </NavLink>
               </>
@@ -76,9 +99,7 @@ export default function Layout() {
         </div>
       </header>
 
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
     </div>
   );
 }

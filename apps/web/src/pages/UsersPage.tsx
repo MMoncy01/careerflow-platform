@@ -25,33 +25,37 @@ export default function UsersPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 700, margin: '40px auto', fontFamily: 'system-ui' }}>
-      <h1>CareerFlow – Users</h1>
-      <p>
-        Users are now created through the authentication flow using the Register page.
-      </p>
+    <main className="page">
+      <div>
+        <div className="badge">Users</div>
+        <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>Registered Users</h1>
+        <p className="muted">
+          User accounts are created through the secure register/login flow.
+        </p>
+      </div>
 
-      <button onClick={load} disabled={loading} style={{ padding: '8px 12px' }}>
+      <button className="btn btn-secondary" onClick={load} disabled={loading}>
         {loading ? 'Loading...' : 'Refresh'}
       </button>
 
-      {error && <p style={{ color: 'crimson' }}>❌ {error}</p>}
+      {error && <p className="error">❌ {error}</p>}
 
-      <h2>Registered Users</h2>
-
-      {loading ? (
-        <p>Loading users...</p>
-      ) : users.length === 0 ? (
-        <p>No users found.</p>
-      ) : (
-        <ul>
-          {users.map((u) => (
-            <li key={u.id}>
-              {u.email} {u.name && `(${u.name})`}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+      <div className="grid" style={{ marginTop: 18 }}>
+        {loading ? (
+          <p className="muted">Loading users...</p>
+        ) : users.length === 0 ? (
+          <div className="card" style={{ padding: 20 }}>
+            <p className="muted">No users found.</p>
+          </div>
+        ) : (
+          users.map((u) => (
+            <div className="card" key={u.id} style={{ padding: 18 }}>
+              <strong>{u.email}</strong>
+              <div className="muted">{u.name ?? 'No name provided'}</div>
+            </div>
+          ))
+        )}
+      </div>
+    </main>
   );
 }

@@ -28,23 +28,32 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 900, margin: '40px auto', fontFamily: 'system-ui' }}>
-      <h1>Dashboard</h1>
-      <p>
-        Welcome{user?.name ? `, ${user.name}` : ''}. Track your job search progress here.
-      </p>
+    <main className="page">
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <div className="badge">Dashboard</div>
+          <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>
+            Welcome{user?.name ? `, ${user.name}` : ''}
+          </h1>
+          <p className="muted">Here is your current job search pipeline overview.</p>
+        </div>
 
-      {error && <p style={{ color: 'crimson' }}>❌ {error}</p>}
+        <Link className="btn btn-primary" to="/applications">
+          Add / Manage Applications
+        </Link>
+      </div>
+
+      {error && <p className="error">❌ {error}</p>}
 
       {loading ? (
-        <p>Loading dashboard...</p>
+        <p className="muted">Loading dashboard...</p>
       ) : stats ? (
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            gap: 12,
-            marginTop: 20,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            gap: 16,
+            marginTop: 24,
           }}
         >
           <StatCard label="Total" value={stats.total} />
@@ -55,26 +64,15 @@ export default function DashboardPage() {
           <StatCard label="Withdrawn" value={stats.withdrawn} />
         </div>
       ) : null}
-
-      <div style={{ marginTop: 24 }}>
-        <Link to="/applications">Manage Applications →</Link>
-      </div>
-    </div>
+    </main>
   );
 }
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div
-      style={{
-        border: '1px solid #e5e5e5',
-        borderRadius: 10,
-        padding: 16,
-        background: '#fafafa',
-      }}
-    >
-      <div style={{ fontSize: 28, fontWeight: 700 }}>{value}</div>
-      <div style={{ color: '#555' }}>{label}</div>
+    <div className="card" style={{ padding: 20 }}>
+      <div style={{ fontSize: 34, fontWeight: 900 }}>{value}</div>
+      <div className="muted" style={{ marginTop: 4 }}>{label}</div>
     </div>
   );
 }

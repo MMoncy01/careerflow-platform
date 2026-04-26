@@ -30,47 +30,51 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: '50px auto', fontFamily: 'system-ui' }}>
-      <h1>Register</h1>
-      <p>Create your CareerFlow account.</p>
+    <main className="page">
+      <div className="card" style={{ maxWidth: 450, margin: '40px auto', padding: 30 }}>
+        <h1 style={{ marginTop: 0 }}>Create account</h1>
+        <p className="muted">Start organizing your job search with CareerFlow.</p>
 
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 10 }}>
-        <input
-          placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          style={{ padding: 10 }}
-        />
+        <form onSubmit={onSubmit} className="grid">
+          <label>
+            Name
+            <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+          </label>
 
-        <input
-          placeholder="Email"
-          value={email}
-          type="email"
-          required
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10 }}
-        />
+          <label>
+            Email
+            <input
+              className="input"
+              value={email}
+              type="email"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <input
-          placeholder="Password"
-          value={password}
-          type="password"
-          required
-          minLength={8}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: 10 }}
-        />
+          <label>
+            Password
+            <input
+              className="input"
+              value={password}
+              type="password"
+              required
+              minLength={8}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button disabled={loading} style={{ padding: 10 }}>
-          {loading ? 'Creating account...' : 'Register'}
-        </button>
-      </form>
+          <button className="btn btn-primary" disabled={loading}>
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
+        </form>
 
-      {error && <p style={{ color: 'crimson' }}>❌ {error}</p>}
+        {error && <p className="error">❌ {error}</p>}
 
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </div>
+        <p className="muted">
+          Already registered? <Link to="/login">Login</Link>
+        </p>
+      </div>
+    </main>
   );
 }

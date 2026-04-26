@@ -29,39 +29,45 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: '50px auto', fontFamily: 'system-ui' }}>
-      <h1>Login</h1>
-      <p>Access your CareerFlow workspace.</p>
+    <main className="page">
+      <div className="card" style={{ maxWidth: 450, margin: '40px auto', padding: 30 }}>
+        <h1 style={{ marginTop: 0 }}>Welcome back</h1>
+        <p className="muted">Login to continue tracking your job applications.</p>
 
-      <form onSubmit={onSubmit} style={{ display: 'grid', gap: 10 }}>
-        <input
-          placeholder="Email"
-          value={email}
-          type="email"
-          required
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10 }}
-        />
+        <form onSubmit={onSubmit} className="grid">
+          <label>
+            Email
+            <input
+              className="input"
+              value={email}
+              type="email"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </label>
 
-        <input
-          placeholder="Password"
-          value={password}
-          type="password"
-          required
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ padding: 10 }}
-        />
+          <label>
+            Password
+            <input
+              className="input"
+              value={password}
+              type="password"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
 
-        <button disabled={loading} style={{ padding: 10 }}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+          <button className="btn btn-primary" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
 
-      {error && <p style={{ color: 'crimson' }}>❌ {error}</p>}
+        {error && <p className="error">❌ {error}</p>}
 
-      <p>
-        No account? <Link to="/register">Register</Link>
-      </p>
-    </div>
+        <p className="muted">
+          No account? <Link to="/register">Create one</Link>
+        </p>
+      </div>
+    </main>
   );
 }
