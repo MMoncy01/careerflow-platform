@@ -4,43 +4,16 @@ export type User = {
   id: string;
   email: string;
   name?: string | null;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
-export async function listUsers(): Promise<User[]> {
-  const res = await fetch(`${API_URL}/users`);
-
-  if (!res.ok) {
-    throw new Error(`Failed to load users (${res.status})`);
-  }
-
-  return res.json();
-}
-
-export async function createUser(data: {
-  email: string;
-  name?: string;
-}): Promise<User> {
-  const res = await fetch(`${API_URL}/users`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-
-  if (res.status === 409) {
-    const body = await res.json();
-    throw new Error(body.message ?? 'Email already exists');
-  }
-
-  if (!res.ok) {
-    throw new Error(`Create failed (${res.status})`);
-  }
-
-  return res.json();
-}
-
-export type ApplicationStatus = 'APPLIED' | 'INTERVIEW' | 'OFFER' | 'REJECTED' | 'WITHDRAWN';
+export type ApplicationStatus =
+  | 'APPLIED'
+  | 'INTERVIEW'
+  | 'OFFER'
+  | 'REJECTED'
+  | 'WITHDRAWN';
 
 export type JobApplication = {
   id: string;
@@ -53,13 +26,95 @@ export type JobApplication = {
   updatedAt: string;
 };
 
-export async function listApplications(status?: ApplicationStatus): Promise<JobApplication[]> {
-  const url = new URL(`${API_URL}/applications`);
-  if (status) url.searchParams.set('status', status);
+export type ApplicationStats = {
+  total: number;
+  applied: number;
+  interview: number;
+  offer: number;
+  rejected: number;
+  withdrawn: number;
+};
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Failed to load applications (${res.status})`);
+export type AuthResponse = {
+  user: User;
+  accessToken: string;
+};
+
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null) {
+  accessToken = token;
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const headers = new Headers(options.headers);
+
+  headers.set('Content-Type', 'application/json');
+
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`);
+  }
+
+  const res = await fetch(`${API_URL}${path}`, {
+    ...options,
+    credentials: 'include',
+    headers,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.message ?? `Request failed (${res.status})`);
+  }
+
   return res.json();
+}
+
+export async function register(data: {
+  email: string;
+  name?: string;
+  password: string;
+}): Promise<User> {
+  return request<User>('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function login(data: {
+  email: string;
+  password: string;
+}): Promise<AuthResponse> {
+  return request<AuthResponse>('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function refresh(): Promise<AuthResponse> {
+  return request<AuthResponse>('/auth/refresh', {
+    method: 'POST',
+  });
+}
+
+export async function logout(): Promise<{ ok: boolean }> {
+  return request<{ ok: boolean }>('/auth/logout', {
+    method: 'POST',
+  });
+}
+
+export async function me(): Promise<User> {
+  return request<User>('/auth/me');
+}
+
+export async function listUsers(): Promise<User[]> {
+  return request<User[]>('/users');
+}
+
+export async function listApplications(
+  status?: ApplicationStatus,
+): Promise<JobApplication[]> {
+  const query = status ? `?status=${status}` : '';
+  return request<JobApplication[]>(`/applications${query}`);
 }
 
 export async function createApplication(data: {
@@ -69,22 +124,36 @@ export async function createApplication(data: {
   notes?: string;
   appliedAt?: string;
 }): Promise<JobApplication> {
-  const res = await fetch(`${API_URL}/applications`, {
+  return request<JobApplication>('/applications', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => null);
-    throw new Error(body?.message ?? `Create failed (${res.status})`);
-  }
-
-  return res.json();
 }
 
-export async function deleteApplication(id: string): Promise<{ deleted: boolean }> {
-  const res = await fetch(`${API_URL}/applications/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error(`Delete failed (${res.status})`);
-  return res.json();
+export async function updateApplication(
+  id: string,
+  data: Partial<{
+    company: string;
+    role: string;
+    status: ApplicationStatus;
+    notes: string;
+    appliedAt: string;
+  }>,
+): Promise<JobApplication> {
+  return request<JobApplication>(`/applications/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteApplication(
+  id: string,
+): Promise<{ deleted: boolean }> {
+  return request<{ deleted: boolean }>(`/applications/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function getApplicationStats(): Promise<ApplicationStats> {
+  return request<ApplicationStats>('/applications/stats');
 }
