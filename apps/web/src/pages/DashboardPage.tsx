@@ -56,7 +56,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <h2 style={{ marginTop: 28 }}>Application Pipeline</h2>
+      <h2 style={{ marginTop: 28 }}>Application Overview</h2>
 
       <div
         style={{
@@ -74,7 +74,7 @@ export default function DashboardPage() {
         <Stat title="Weekly Added" value={appStats.weeklyApplications} />
       </div>
 
-      <h2 style={{ marginTop: 28 }}>Interview Pipeline</h2>
+      <h2 style={{ marginTop: 28 }}>Interview Overview</h2>
 
       <div
         style={{

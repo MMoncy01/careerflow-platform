@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import InterviewsPage from './pages/InterviewsPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
+import PipelinePage from './pages/PipelinePage';
 import RegisterPage from './pages/RegisterPage';
 
 export const router = createBrowserRouter([
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'applications', element: <ApplicationsPage /> },
+          { path: 'pipeline', element: <PipelinePage /> },
           { path: 'interviews', element: <InterviewsPage /> },
           { path: 'ai-assistant', element: <AiAssistantPage /> },
         ],

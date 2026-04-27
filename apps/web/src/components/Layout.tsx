@@ -67,6 +67,9 @@ export default function Layout() {
                 <NavLink to="/applications" style={navLink}>
                   Applications
                 </NavLink>
+                <NavLink to="/pipeline" style={navLink}>
+                  Board View
+                </NavLink>
                 <NavLink to="/interviews" style={navLink}>
                   Interviews
                 </NavLink>
