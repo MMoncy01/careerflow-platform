@@ -56,6 +56,21 @@ export type AuthResponse = {
   accessToken: string;
 };
 
+export type AiJobAnalysis = {
+  summary: string;
+  atsKeywords: string[];
+  keySkills: string[];
+  toolsAndTechnologies: string[];
+  responsibilities: string[];
+  qualifications: string[];
+  resumeTips: string[];
+  skillGaps: string[];
+  followUpEmail: string;
+  recruiterMessage: string;
+  interviewQuestions: string[];
+  projectTalkingPoints: string[];
+};
+
 let accessToken: string | null = null;
 
 export function setAccessToken(token: string | null) {
@@ -146,4 +161,11 @@ export async function deleteApplication(id: string) {
 
 export async function getApplicationStats() {
   return request<DashboardStats>('/applications/stats');
+}
+
+export async function analyzeJobDescription(jobDescription: string) {
+  return request<AiJobAnalysis>('/ai/analyze-job', {
+    method: 'POST',
+    body: JSON.stringify({ jobDescription }),
+  });
 }

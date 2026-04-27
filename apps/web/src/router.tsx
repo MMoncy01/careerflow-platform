@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import ProtectedRoute from './auth/ProtectedRoute';
 import Layout from './components/Layout';
+import AiAssistantPage from './pages/AiAssistantPage';
 import ApplicationsPage from './pages/ApplicationsPage';
 import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'applications', element: <ApplicationsPage /> },
+          { path: 'ai-assistant', element: <AiAssistantPage /> },
         ],
       },
       { path: '*', element: <NotFoundPage /> },

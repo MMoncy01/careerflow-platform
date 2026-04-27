@@ -54,7 +54,7 @@ export default function Layout() {
             CareerFlow
           </NavLink>
 
-          <nav style={{ display: 'flex', gap: 6 }}>
+          <nav style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <NavLink to="/" style={navLink} end>
               Home
             </NavLink>
@@ -66,6 +66,9 @@ export default function Layout() {
                 </NavLink>
                 <NavLink to="/applications" style={navLink}>
                   Applications
+                </NavLink>
+                <NavLink to="/ai-assistant" style={navLink}>
+                  AI Assistant
                 </NavLink>
               </>
             )}
