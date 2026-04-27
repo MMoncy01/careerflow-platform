@@ -5,6 +5,7 @@ import AiAssistantPage from './pages/AiAssistantPage';
 import ApplicationsPage from './pages/ApplicationsPage';
 import DashboardPage from './pages/DashboardPage';
 import HomePage from './pages/HomePage';
+import InterviewsPage from './pages/InterviewsPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import RegisterPage from './pages/RegisterPage';
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'applications', element: <ApplicationsPage /> },
+          { path: 'interviews', element: <InterviewsPage /> },
           { path: 'ai-assistant', element: <AiAssistantPage /> },
         ],
       },

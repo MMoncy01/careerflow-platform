@@ -8,6 +8,7 @@ import { HealthModule } from './health/health.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AuthModule } from './auth/auth.module';
 import { AiModule } from './ai/ai.module';
+import { InterviewsModule } from './interviews/interviews.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { AiModule } from './ai/ai.module';
     ApplicationsModule,
     AuthModule,
     AiModule,
+    InterviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

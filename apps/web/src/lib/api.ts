@@ -51,9 +51,49 @@ export type DashboardStats = {
   recentApplications: JobApplication[];
 };
 
-export type AuthResponse = {
-  user: User;
-  accessToken: string;
+export type InterviewType =
+  | 'HR'
+  | 'TECHNICAL'
+  | 'BEHAVIORAL'
+  | 'MANAGERIAL'
+  | 'FINAL'
+  | 'OTHER';
+
+export type InterviewResult =
+  | 'SCHEDULED'
+  | 'COMPLETED'
+  | 'PASSED'
+  | 'REJECTED'
+  | 'CANCELLED';
+
+export type Interview = {
+  id: string;
+  title?: string | null;
+  type: InterviewType;
+  round: number;
+  scheduledAt: string;
+  result: InterviewResult;
+  notes?: string | null;
+  nextRoundAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  applicationId?: string | null;
+  application?: {
+    id: string;
+    company: string;
+    role: string;
+    status: ApplicationStatus;
+  } | null;
+};
+
+export type InterviewStats = {
+  total: number;
+  scheduled: number;
+  completed: number;
+  passed: number;
+  rejected: number;
+  cancelled: number;
+  upcoming: Interview[];
 };
 
 export type AiJobAnalysis = {
@@ -69,6 +109,11 @@ export type AiJobAnalysis = {
   recruiterMessage: string;
   interviewQuestions: string[];
   projectTalkingPoints: string[];
+};
+
+export type AuthResponse = {
+  user: User;
+  accessToken: string;
 };
 
 let accessToken: string | null = null;
@@ -168,4 +213,37 @@ export async function analyzeJobDescription(jobDescription: string) {
     method: 'POST',
     body: JSON.stringify({ jobDescription }),
   });
+}
+
+export async function listInterviews(result?: string) {
+  const query = result ? `?result=${result}` : '';
+  return request<Interview[]>(`/interviews${query}`);
+}
+
+export async function createInterview(data: Partial<Interview>) {
+  return request<Interview>('/interviews', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function updateInterview(id: string, data: Partial<Interview>) {
+  return request<Interview>(`/interviews/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteInterview(id: string) {
+  return request<{ deleted: boolean }>(`/interviews/${id}`, {
+    method: 'DELETE',
+  });
+}
+
+export async function getInterviewStats() {
+  return request<InterviewStats>('/interviews/stats');
+}
+
+export async function listUpcomingInterviews() {
+  return request<Interview[]>('/interviews/upcoming');
 }

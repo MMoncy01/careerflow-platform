@@ -67,6 +67,9 @@ export default function Layout() {
                 <NavLink to="/applications" style={navLink}>
                   Applications
                 </NavLink>
+                <NavLink to="/interviews" style={navLink}>
+                  Interviews
+                </NavLink>
                 <NavLink to="/ai-assistant" style={navLink}>
                   AI Assistant
                 </NavLink>
