@@ -49,10 +49,12 @@ export default function InterviewsPage() {
 
   async function load() {
     setLoading(true);
+
     const [interviewData, applicationData] = await Promise.all([
       listInterviews(resultFilter || undefined),
       listApplications(),
     ]);
+
     setInterviews(interviewData);
     setApplications(applicationData);
     setLoading(false);
@@ -95,92 +97,110 @@ export default function InterviewsPage() {
 
   return (
     <main className="page">
-      <div className="badge">Interview Pipeline</div>
-      <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>Interview Tracker</h1>
+      <div className="badge">Interview Tracker</div>
+
+      <h1 style={{ fontSize: 42, margin: '12px 0 6px' }}>Interview Manager</h1>
+
       <p className="muted">
-        Track HR screens, technical interviews, next rounds, preparation notes,
-        and outcomes linked to your applications.
+        Track HR screens, technical interviews, next rounds, preparation notes, and outcomes linked to your applications.
       </p>
 
-      <section className="card" style={{ padding: 22, marginTop: 20 }}>
+      <section className="card" style={{ padding: 24, marginTop: 20 }}>
         <h2 style={{ marginTop: 0 }}>Add interview</h2>
 
         <form onSubmit={onCreate} className="grid">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-            <input
-              className="input"
-              placeholder="Interview title"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+          <FormSection title="Interview Details">
+            <Field label="Interview Title">
+              <input
+                className="input"
+                placeholder="Example: Technical Interview Round 1"
+                value={form.title}
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
+              />
+            </Field>
+
+            <Field label="Linked Application">
+              <select
+                className="select"
+                value={form.applicationId}
+                onChange={(e) => setForm({ ...form, applicationId: e.target.value })}
+              >
+                <option value="">No linked application</option>
+                {applications.map((app) => (
+                  <option key={app.id} value={app.id}>
+                    {app.company} — {app.role}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field label="Interview Type">
+              <select
+                className="select"
+                value={form.type}
+                onChange={(e) => setForm({ ...form, type: e.target.value })}
+              >
+                {TYPES.map((type) => (
+                  <option key={type}>{type}</option>
+                ))}
+              </select>
+            </Field>
+
+            <Field label="Round Number">
+              <input
+                className="input"
+                type="number"
+                min={1}
+                value={form.round}
+                onChange={(e) => setForm({ ...form, round: Number(e.target.value) })}
+              />
+            </Field>
+
+            <Field label="Interview Result">
+              <select
+                className="select"
+                value={form.result}
+                onChange={(e) => setForm({ ...form, result: e.target.value })}
+              >
+                {RESULTS.map((result) => (
+                  <option key={result}>{result}</option>
+                ))}
+              </select>
+            </Field>
+          </FormSection>
+
+          <FormSection title="Schedule">
+            <Field label="Scheduled Interview Date & Time">
+              <input
+                className="input"
+                type="datetime-local"
+                value={form.scheduledAt}
+                required
+                onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })}
+              />
+            </Field>
+
+            <Field label="Next Round Date & Time">
+              <input
+                className="input"
+                type="datetime-local"
+                value={form.nextRoundAt}
+                onChange={(e) => setForm({ ...form, nextRoundAt: e.target.value })}
+              />
+            </Field>
+          </FormSection>
+
+          <Field label="Interview Notes">
+            <textarea
+              className="textarea"
+              placeholder="Preparation notes, questions asked, feedback, next steps..."
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
             />
-
-            <select
-              className="select"
-              value={form.applicationId}
-              onChange={(e) => setForm({ ...form, applicationId: e.target.value })}
-            >
-              <option value="">No linked application</option>
-              {applications.map((app) => (
-                <option key={app.id} value={app.id}>
-                  {app.company} — {app.role}
-                </option>
-              ))}
-            </select>
-
-            <select
-              className="select"
-              value={form.type}
-              onChange={(e) => setForm({ ...form, type: e.target.value })}
-            >
-              {TYPES.map((type) => (
-                <option key={type}>{type}</option>
-              ))}
-            </select>
-
-            <input
-              className="input"
-              type="number"
-              min={1}
-              placeholder="Round"
-              value={form.round}
-              onChange={(e) => setForm({ ...form, round: Number(e.target.value) })}
-            />
-
-            <input
-              className="input"
-              type="datetime-local"
-              value={form.scheduledAt}
-              required
-              onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })}
-            />
-
-            <select
-              className="select"
-              value={form.result}
-              onChange={(e) => setForm({ ...form, result: e.target.value })}
-            >
-              {RESULTS.map((result) => (
-                <option key={result}>{result}</option>
-              ))}
-            </select>
-
-            <input
-              className="input"
-              type="datetime-local"
-              value={form.nextRoundAt}
-              onChange={(e) => setForm({ ...form, nextRoundAt: e.target.value })}
-            />
-          </div>
-
-          <textarea
-            className="textarea"
-            placeholder="Interview preparation notes, questions asked, feedback, next steps..."
-            value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-          />
+          </Field>
 
           <button className="btn btn-primary" disabled={saving}>
-            {saving ? 'Saving...' : 'Add Interview'}
+            {saving ? 'Adding...' : 'Add Interview'}
           </button>
         </form>
       </section>
@@ -239,6 +259,7 @@ function InterviewCard({
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 18, flexWrap: 'wrap' }}>
         <div>
           <div className="badge">{interview.result}</div>
+
           <h3 style={{ margin: '10px 0 4px', fontSize: 22 }}>
             {interview.title || `${interview.type} Interview`}
           </h3>
@@ -281,5 +302,37 @@ function InterviewCard({
         </div>
       </div>
     </div>
+  );
+}
+
+function FormSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h3 style={{ margin: '8px 0 12px' }}>{title}</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label style={{ display: 'grid', gap: 6, fontWeight: 700 }}>
+      <span>{label}</span>
+      {children}
+    </label>
   );
 }
