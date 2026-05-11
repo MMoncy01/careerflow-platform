@@ -1,285 +1,244 @@
-# CareerFlow – Intelligent Job Application Tracking Platform
+# CareerFlow – Job Application Tracking Platform
 
-CareerFlow is a production-style full-stack web application built to help job seekers manage, monitor, and optimize their complete job search workflow in one centralized platform.
-
-Unlike a traditional spreadsheet tracker, CareerFlow provides:
-
-- secure user authentication
-- private job application management
-- recruiter/contact tracking
-- follow-up reminders
-- application analytics dashboard
-- status-based workflow updates
-- searchable job history
-- performance insights
-
-The platform is designed to simulate a real-world SaaS productivity product using a modern enterprise-grade full-stack architecture.
+CareerFlow is a full-stack job application tracking platform designed to help users manage and organize their job search process efficiently. The platform allows users to track applications, recruiter details, interview stages, follow-up dates, resume versions, and application statuses through a centralized dashboard.
 
 ---
 
-## Live Project Purpose
+# Tech Stack
 
-CareerFlow solves a common problem faced by active job seekers:
-
-> Managing dozens of job applications, recruiter conversations, resume versions, and follow-up deadlines becomes chaotic in spreadsheets and scattered notes.
-
-CareerFlow centralizes that process into one secure workflow-driven application.
-
-Users can:
-
-- register/login securely
-- create and manage detailed job applications
-- track recruiter contact details
-- save resume version used for each role
-- attach job links and descriptions
-- monitor follow-up deadlines
-- analyze response/interview/offer rates
-- search and filter applications instantly
-- update application statuses dynamically
-
----
-
-## Key Features Implemented
-
-### Authentication & Security
-
-- JWT based secure authentication
-- HTTP-only refresh token cookie flow
-- protected private routes
-- per-user application ownership isolation
-
-### Career Dashboard Analytics
-
-- total applications tracked
-- weekly application count
-- response rate %
-- interview conversion %
-- offer conversion %
-- recent applications panel
-- follow-up due reminders
-
-### Advanced Application Tracking
-
-Each application record supports:
-
-- Company Name
-- Role / Position
-- Application Status
-- Job Location
-- Job Posting URL
-- Source (LinkedIn / Referral / Company Site / etc.)
-- Recruiter Name
-- Recruiter Email
-- Resume Version Used
-- Job Description
-- Applied Date
-- Follow-Up Date
-- Private Notes
-- Last Activity Timestamp
-
-### Workflow Productivity
-
-- quick status updates
-- search by company / role / recruiter
-- filter by status
-- delete applications
-- automatic stale/follow-up detection logic
-
-### API Documentation
-
-- fully documented Swagger API available at `/docs`
-
----
-
-## Full Tech Stack
-
-### Frontend
-
-- React 18
+## Frontend
+- React 19
 - TypeScript
 - Vite
 - React Router
-- Context API Authentication State
 
-### Backend
-
+## Backend
 - NestJS
 - TypeScript
-- Prisma ORM
+- REST API
 - JWT Authentication
-- Cookie-based refresh token workflow
-- REST API architecture
 
-### Database
-
+## Database
 - PostgreSQL
+- Prisma ORM
 
-### DevOps / Version Control
-
-- Git
-- GitHub
-- Incremental feature milestone commits
+## Tools & Technologies
+- Docker
+- Swagger API Documentation
+- Git & GitHub
 
 ---
 
-## System Architecture
+# Key Features
+
+- Secure user authentication and authorization
+- JWT access token authentication with refresh-token flow
+- Create, update, delete, and manage job applications
+- Track:
+  - Company name
+  - Job role
+  - Application status
+  - Recruiter details
+  - Resume version
+  - Job URL
+  - Notes
+  - Follow-up dates
+- Dashboard analytics and application statistics
+- Protected API routes
+- Swagger API documentation
+- Modular frontend/backend architecture
+
+---
+
+# Architecture
 
 ```text
 React Frontend (Vite)
         ↓
 NestJS REST API
         ↓
-Prisma ORM Service Layer
+Prisma ORM
         ↓
 PostgreSQL Database
 ```
 
-Authentication Flow:
+---
+
+# Project Structure
 
 ```text
-Register/Login → JWT Access Token + Refresh Cookie
-        ↓
-Protected API Requests
-        ↓
-Per-user private data access
+careerflow-platform/
+├── apps/
+│   ├── api/        # NestJS backend
+│   └── web/        # React frontend
+├── docker-compose.yml
+├── package.json
+└── README.md
 ```
 
 ---
 
-## Main Screens Included
+# Local Setup
 
-- Home Page
-- Register Page
-- Login Page
-- Analytics Dashboard
-- Applications Management Workspace
-- Protected 404 Routing
-- Swagger API Docs
-
----
-
-## Sample Product Screenshots
-
-> Add screenshots here after UI finalization.
-
-Recommended screenshots to upload later:
-
-```md
-![Dashboard](screenshots/dashboard.png)
-![Applications](screenshots/applications.png)
-![Login](screenshots/login.png)
-```
-
----
-
-## Local Development Setup
-
-### 1. Clone repository
+## 1. Clone Repository
 
 ```bash
 git clone https://github.com/MMoncy01/careerflow-platform.git
 cd careerflow-platform
 ```
 
-### 2. Install dependencies
+---
+
+## 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start PostgreSQL (Docker)
+---
+
+## 3. Start PostgreSQL with Docker
 
 ```bash
 docker compose up -d
 ```
 
-### 4. Run Prisma migrations
+Docker database credentials:
+
+```env
+POSTGRES_USER=careerflow
+POSTGRES_PASSWORD=careerflow_pw
+POSTGRES_DB=careerflow_db
+```
+
+---
+
+## 4. Configure Environment Variables
+
+Create a `.env` file inside:
+
+```text
+apps/api/
+```
+
+Add:
+
+```env
+DATABASE_URL="postgresql://careerflow:careerflow_pw@localhost:5432/careerflow_db"
+JWT_ACCESS_SECRET="your_access_secret"
+JWT_REFRESH_SECRET="your_refresh_secret"
+PORT=3000
+```
+
+---
+
+## 5. Run Prisma Migration
 
 ```bash
 cd apps/api
+
 npx prisma migrate dev
 npx prisma generate
 ```
 
-### 5. Start Backend API
+---
+
+## 6. Start Backend Server
 
 ```bash
 npm run start:dev
 ```
 
-Backend runs on:
+Backend runs at:
 
-```txt
+```text
 http://localhost:3000
 ```
 
-Swagger Docs:
+Swagger API Documentation:
 
-```txt
+```text
 http://localhost:3000/docs
 ```
 
-### 6. Start Frontend
+---
 
-Open new terminal:
+## 7. Start Frontend
+
+Open another terminal:
 
 ```bash
 cd apps/web
+
 npm run dev
 ```
 
-Frontend runs on:
+Frontend runs at:
 
-```txt
+```text
 http://localhost:5173
 ```
 
 ---
 
-## Core REST Endpoints
+# Core API Endpoints
 
-### Auth
+## Authentication
 
-- POST `/auth/register`
-- POST `/auth/login`
-- POST `/auth/refresh`
-- POST `/auth/logout`
-- GET `/auth/me`
+```text
+POST /auth/register
+POST /auth/login
+POST /auth/refresh
+POST /auth/logout
+GET  /auth/me
+```
 
-### Applications
+## Applications
 
-- POST `/applications`
-- GET `/applications`
-- GET `/applications/stats`
-- PATCH `/applications/:id`
-- DELETE `/applications/:id`
-
----
-
-## Engineering Highlights
-
-This project demonstrates:
-
-- scalable frontend/backend separation
-- protected enterprise authentication workflow
-- relational data ownership modeling
-- advanced DTO validation
-- analytics aggregation logic
-- production-style REST architecture
-- real-world CRUD + search + workflow management
+```text
+POST   /applications
+GET    /applications
+GET    /applications/stats
+PATCH  /applications/:id
+DELETE /applications/:id
+```
 
 ---
 
-## Planned Next Enhancements
+# Engineering Highlights
 
-- AI job description summarizer
-- recruiter follow-up email generator
-- interview tracker module
-- document/resume manager
-- cloud deployment
+- Built a complete full-stack TypeScript application
+- Implemented JWT authentication and protected APIs
+- Designed normalized relational database models using Prisma and PostgreSQL
+- Added per-user application ownership and data isolation
+- Implemented DTO validation for safer backend input handling
+- Created analytics logic for tracking application success metrics
+- Documented APIs using Swagger
+- Structured the application using modular frontend and backend architecture
 
 ---
 
-## Repository Status
+# Future Improvements
 
-Actively being enhanced as a production-grade portfolio project.
+- Resume upload and management
+- AI-powered job description summarization
+- Interview scheduling tracker
+- Email follow-up automation
+- Cloud deployment
+- Automated test coverage
+
+---
+
+# GitHub Repository
+
+Repository Link:
+
+```text
+https://github.com/MMoncy01/careerflow-platform
+```
+
+---
+
+# License
+
+MIT License
